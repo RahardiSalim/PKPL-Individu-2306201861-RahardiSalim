@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hasil Input Pengguna</title>
+</head>
+<body>
+    <h1>Hasil Input Pengguna</h1>
+    <ul>
+        {% for key, value in data.items %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'user_form' %}">Kembali ke Form</a>
+</body>
+</html>

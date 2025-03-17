@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Pengguna</title>
+</head>
+<body>
+    <h1>Daftar Pengguna</h1>
+    <table border="1">
+        <tr>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Nomor HP</th>
+            <th>Tanggal Lahir</th>
+            <th>URL Blog</th>
+            <th>Golongan Darah</th>
+            <th>No. Polis Asuransi</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.nama }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.nomor_hp }}</td>
+            <td>{{ user.tanggal_lahir }}</td>
+            <td>{{ user.url_blog }}</td>
+            <td>{{ user.golongan_darah }}</td>
+            <td>{{ user.no_polis_asuransi }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'user_form' %}">Tambah Pengguna</a>
+</body>
+</html>
