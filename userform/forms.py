@@ -33,32 +33,47 @@ class UserForm(forms.ModelForm):
     )
     
     # 3. Tanggal Lahir: validasi usia minimal 12 tahun
-    tanggal_lahir = forms.DateField(
+    dob_validator = RegexValidator(
+        regex=r'^(19[0-9]{2}|20[0-2][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$',
+        message="Format tanggal lahir harus YYYY-MM-DD dan usia minimal 12 tahun."
+    )
+    tanggal_lahir = forms.CharField(
         label="Tanggal Lahir",
-        widget=forms.DateInput(attrs={'type': 'date'})
+        max_length=10,
+        validators=[dob_validator]
     )
     
     # 4. Nomor HP: hanya boleh angka, tanpa tanda '+' atau '-' dengan panjang 8-15 digit
-    nomor_hp_validator = RegexValidator(
-        regex=r'^\d{8,15}$',
-        message='Nomor HP harus terdiri dari 8 sampai 15 digit angka tanpa simbol seperti + atau -'
+    phone_number_validator = RegexValidator(
+        regex=r'^62\d{7,13}$',
+        message="Nomor HP harus dimulai dengan '62' dan berisi 8-15 digit angka (contoh: 621234567890)."
     )
     nomor_hp = forms.CharField(
         label="Nomor HP",
         max_length=15,
-        validators=[nomor_hp_validator]
+        validators=[phone_number_validator]
     )
-    
+
     # 5. Email: menggunakan EmailField bawaan Django
-    email = forms.EmailField(
+    email_validator = RegexValidator(
+        regex=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+        message="Masukkan email yang valid, contoh: user@example.com"
+    )
+    email = forms.CharField(
         label="Email",
-        max_length=255
+        max_length=255,
+        validators=[email_validator]
     )
     
     # 6. URL Blog: menggunakan URLField bawaan Django
-    url_blog = forms.URLField(
+    url_validator = RegexValidator(
+        regex=r'^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\/?$',
+        message="Masukkan URL yang valid, contoh: http://example.com"
+    )
+    url_blog = forms.CharField(
         label="URL Blog",
-        max_length=255
+        max_length=255,
+        validators=[url_validator]
     )
     
     # 7. Deskripsi Diri: minimal 5 karakter, maksimum 1000 karakter
@@ -94,9 +109,12 @@ class UserForm(forms.ModelForm):
 
     def clean_tanggal_lahir(self):
         tanggal = self.cleaned_data.get('tanggal_lahir')
-        if tanggal:
+        try:
+            dob = datetime.datetime.strptime(tanggal, "%Y-%m-%d").date()
             today = datetime.date.today()
-            age = today.year - tanggal.year - ((today.month, today.day) < (tanggal.month, tanggal.day))
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
             if age < 12:
                 raise ValidationError("Usia minimal harus 12 tahun.")
+        except ValueError:
+            raise ValidationError("Format tanggal tidak valid. Gunakan format YYYY-MM-DD.")
         return tanggal
