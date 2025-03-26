@@ -1,0 +1,18 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Selamat datang, {{ request.user.username }}</h1>
+    <p>
+      <a href="{% url 'user_form' %}">Isi Form</a> |
+      <a href="{% url 'user_list' %}">Daftar Pengguna</a> |
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+    </p>
+</body>
+</html>
